@@ -28,8 +28,7 @@ const Index = () => {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
-  const API_URL = 'https://functions.poehali.dev/7a89db06-7752-4cc5-b58a-9a9235d4033a';
-  const API_KEY = 'madai_dkuQrPKg_SoRtqguxFbF9fOAWNM_OzVhK8ewpGkZZP0';
+  const API_URL = 'https://functions.poehali.dev/50c9483c-f0d8-4188-a362-4dc7ecc7d69a';
 
   const currentChat = chats.find(c => c.id === currentChatId);
 
@@ -82,8 +81,7 @@ const Index = () => {
       const response = await fetch(API_URL, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': API_KEY
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           prompt: userMessage.content
@@ -99,10 +97,12 @@ const Index = () => {
       const data = await response.json();
       console.log('API response:', data);
       
+      const aiContent = data.result?.ai_response?.content || data.result?.content || data.response || 'Не удалось получить ответ';
+      
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.result || data.response || data.message || data.text || 'Не удалось получить ответ',
+        content: aiContent,
         timestamp: new Date()
       };
 

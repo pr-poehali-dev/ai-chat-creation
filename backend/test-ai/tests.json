@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "Test AI proxy",
+      "method": "POST",
+      "path": "/",
+      "body": {
+        "prompt": "Привет"
+      },
+      "expectedStatus": 200,
+      "expectedBody": {
+        "result": "object"
+      },
+      "bodyMatcher": "partial"
+    }
+  ]
+}
