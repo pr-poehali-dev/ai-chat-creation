@@ -83,22 +83,26 @@ const Index = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${API_KEY}`
+          'x-api-key': API_KEY
         },
         body: JSON.stringify({
-          message: userMessage.content,
-          history: currentChat?.messages || []
+          prompt: userMessage.content
         })
       });
 
-      if (!response.ok) throw new Error('API request failed');
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('API error:', errorText);
+        throw new Error(`API error: ${response.status}`);
+      }
 
       const data = await response.json();
+      console.log('API response:', data);
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: data.response || data.message || 'Не удалось получить ответ',
+        content: data.result || data.response || data.message || data.text || 'Не удалось получить ответ',
         timestamp: new Date()
       };
 
@@ -110,6 +114,20 @@ const Index = () => {
 
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: 'assistant',
+        content: 'Извините, произошла ошибка при обращении к AI. Проверьте API ключ и попробуйте снова.',
+        timestamp: new Date()
+      };
+      
+      setChats(prev => prev.map(chat => 
+        chat.id === currentChatId 
+          ? { ...chat, messages: [...chat.messages, errorMessage] }
+          : chat
+      ));
+      
       toast({
         title: 'Ошибка',
         description: 'Не удалось отправить сообщение. Попробуйте снова.',
