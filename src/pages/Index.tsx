@@ -24,7 +24,7 @@ const Index = () => {
   const [currentChatId, setCurrentChatId] = useState<string | null>(null);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -135,10 +135,16 @@ const Index = () => {
 
   return (
     <div className="flex h-screen bg-background text-foreground overflow-hidden">
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
       <aside 
         className={`${
-          isSidebarOpen ? 'w-64' : 'w-0'
-        } transition-all duration-300 bg-sidebar border-r border-sidebar-border flex flex-col overflow-hidden`}
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } fixed md:relative z-50 md:z-0 w-64 md:w-64 transition-transform duration-300 bg-sidebar border-r border-sidebar-border flex flex-col h-full`}
       >
         <div className="p-4 border-b border-sidebar-border">
           <Button 
@@ -179,8 +185,8 @@ const Index = () => {
         </ScrollArea>
       </aside>
 
-      <main className="flex-1 flex flex-col">
-        <header className="h-14 border-b border-border flex items-center px-4 gap-3">
+      <main className="flex-1 flex flex-col w-full">
+        <header className="h-14 border-b border-border flex items-center px-2 md:px-4 gap-2 md:gap-3">
           <Button
             variant="ghost"
             size="icon"
@@ -191,7 +197,7 @@ const Index = () => {
           <h1 className="text-lg font-semibold">AI Chat</h1>
         </header>
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-6">
+        <div ref={scrollRef} className="flex-1 overflow-y-auto p-2 md:p-4 space-y-4 md:space-y-6">
           {!currentChat || currentChat.messages.length === 0 ? (
             <div className="h-full flex items-center justify-center">
               <div className="text-center space-y-4 max-w-md">
@@ -210,17 +216,17 @@ const Index = () => {
                 key={message.id}
                 className={`fade-in flex gap-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div className={`flex gap-3 max-w-3xl ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                <div className={`flex gap-2 md:gap-3 max-w-3xl ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                  <div className={`w-7 h-7 md:w-8 md:h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                     message.role === 'user' ? 'bg-primary' : 'bg-muted'
                   }`}>
                     <Icon 
                       name={message.role === 'user' ? 'User' : 'Bot'} 
-                      size={18}
+                      size={16}
                       className={message.role === 'user' ? 'text-primary-foreground' : ''}
                     />
                   </div>
-                  <div className={`px-4 py-3 rounded-2xl ${
+                  <div className={`px-3 py-2 md:px-4 md:py-3 rounded-2xl text-sm md:text-base ${
                     message.role === 'user' 
                       ? 'bg-primary text-primary-foreground' 
                       : 'bg-muted'
@@ -233,11 +239,11 @@ const Index = () => {
           )}
           {isLoading && (
             <div className="fade-in flex gap-4">
-              <div className="flex gap-3 max-w-3xl">
-                <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
-                  <Icon name="Bot" size={18} />
+              <div className="flex gap-2 md:gap-3 max-w-3xl">
+                <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-muted flex items-center justify-center flex-shrink-0">
+                  <Icon name="Bot" size={16} />
                 </div>
-                <div className="px-4 py-3 rounded-2xl bg-muted">
+                <div className="px-3 py-2 md:px-4 md:py-3 rounded-2xl bg-muted">
                   <div className="flex gap-1">
                     <div className="w-2 h-2 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
                     <div className="w-2 h-2 bg-foreground/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -249,16 +255,16 @@ const Index = () => {
           )}
         </div>
 
-        <div className="border-t border-border p-4">
+        <div className="border-t border-border p-2 md:p-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex gap-2 items-end">
               <Button
                 size="icon"
                 onClick={sendMessage}
                 disabled={!input.trim() || isLoading}
-                className="h-12 w-12 rounded-xl bg-primary hover:bg-primary/90"
+                className="h-10 w-10 md:h-12 md:w-12 rounded-xl bg-primary hover:bg-primary/90 flex-shrink-0"
               >
-                <Icon name="Send" size={20} />
+                <Icon name="Send" size={18} />
               </Button>
               <Textarea
                 value={input}
@@ -270,7 +276,7 @@ const Index = () => {
                   }
                 }}
                 placeholder="Введите сообщение..."
-                className="min-h-[48px] max-h-[200px] resize-none bg-muted border-muted-foreground/20 rounded-xl"
+                className="min-h-[40px] md:min-h-[48px] max-h-[120px] md:max-h-[200px] resize-none bg-muted border-muted-foreground/20 rounded-xl text-sm md:text-base"
                 disabled={isLoading}
               />
             </div>
