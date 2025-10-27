@@ -212,7 +212,7 @@ const Index = () => {
           >
             <Icon name={isSidebarOpen ? 'PanelLeftClose' : 'PanelLeftOpen'} size={20} />
           </Button>
-          <h1 className="text-lg font-semibold">AI Chat</h1>
+          <h1 className="text-lg font-semibold">MadAI 1.0</h1>
         </header>
 
         <div ref={scrollRef} className="flex-1 overflow-y-auto p-2 md:p-4 space-y-4 md:space-y-6">
